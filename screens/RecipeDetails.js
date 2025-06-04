@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Button, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ScrollView, Platform, KeyboardAvoidingView, View, Text, Button, Alert, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { buscarReceitaPorId, deletarReceita } from '../helpers/database';
 import styles from '../styles/details_style';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function RecipeDetails() {
+    const insets = useSafeAreaInsets();
+
     const route = useRoute();
     const navigation = useNavigation();
     const { recipeID } = route.params;
@@ -63,19 +66,26 @@ export default function RecipeDetails() {
     }
 
     return (
-        <ScrollView style={styles.container}>
-            <Text style={styles.title}>{recipe.name}</Text>
+        <SafeAreaView style={{ flex: 1, paddingBottom: insets.bottom }}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                style={{ flex: 1 }}
+            >
+                <ScrollView style={styles.container}>
+                    <Text style={styles.title}>{recipe.name}</Text>
 
-            <Text style={styles.section}>Ingredientes:</Text>
-            <Text style={styles.description}>{recipe.ingredients}</Text>
+                    <Text style={styles.section}>Ingredientes:</Text>
+                    <Text style={styles.description}>{recipe.ingredients}</Text>
 
-            <Text style={styles.section}>Modo de Preparo:</Text>
-            <Text style={styles.description}>{recipe.steps}</Text>
+                    <Text style={styles.section}>Modo de Preparo:</Text>
+                    <Text style={styles.description}>{recipe.steps}</Text>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
-                <Button title="Editar" onPress={editar} />
-                <Button title="Excluir" onPress={excluir} color="red" />
-            </View>
-        </ScrollView>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
+                        <Button title="Editar" onPress={editar} />
+                        <Button title="Excluir" onPress={excluir} color="red" />
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }
